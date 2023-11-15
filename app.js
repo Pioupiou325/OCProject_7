@@ -14,11 +14,6 @@ mongoose
 
 app.use(express.json());
 
-app.post("/api/books", (req, res, next) => {
-  console.log(req.body);
-  res.status(201).json({ message: "Livre créé" });
-});
-
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -32,262 +27,45 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/api/books", (req, res, next) => {
-  const book = [
-    {
-      id: "1",
-      userId: "clc4wj5lh3gyi0ak4eq4n8syr",
-      title: "Milwaukee Mission",
-      author: "Elder Cooper",
-      imageUrl: "https://via.placeholder.com/206x260",
-      year: 2021,
-      genre: "Policier",
-      ratings: [
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "clc4wj5lh3gyi0ak4eq4n8syr",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-      ],
-      averageRating: 3,
-    },
-    {
-      id: "2",
-      userId: "clbxs3tag6jkr0biul4trzbrv",
-      title: "Book for Esther",
-      author: "Alabaster",
-      imageUrl: "https://via.placeholder.com/206x260",
-      year: 2022,
-      genre: "Paysage",
-      ratings: [
-        {
-          userId: "clbxs3tag6jkr0biul4trzbrv",
-          grade: 4,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-      ],
-      averageRating: 4.2,
-    },
-    {
-      id: "3",
-      userId: "1",
-      title: "The Kinfolk Table",
-      author: "Nathan Williams",
-      imageUrl: "https://via.placeholder.com/206x260",
-      year: 2022,
-      genre: "Cuisine",
-      ratings: [
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-      ],
-      averageRating: 3,
-    },
-    {
-      id: "4",
-      userId: "1",
-      title: "Milwaukee Mission",
-      author: "Elder Cooper",
-      imageUrl: "https://via.placeholder.com/206x260",
-      year: 2021,
-      genre: "Policier",
-      ratings: [
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-      ],
-      averageRating: 3,
-    },
-    {
-      id: "5",
-      userId: "1",
-      title: "Book for Esther",
-      author: "Alabaster",
-      imageUrl: "https://via.placeholder.com/206x260",
-      year: 2022,
-      genre: "Paysage",
-      ratings: [
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-      ],
-      averageRating: 4,
-    },
-    {
-      id: "6",
-      userId: "1",
-      title: "The Kinfolk Table",
-      author: "Nathan Williams",
-      imageUrl: "https://via.placeholder.com/206x260",
-      year: 2022,
-      genre: "Cuisine",
-      ratings: [
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-      ],
-      averageRating: 3,
-    },
-    {
-      id: "7",
-      userId: "1",
-      title: "Milwaukee Mission",
-      author: "Elder Cooper",
-      imageUrl: "https://via.placeholder.com/206x260",
-      year: 2021,
-      genre: "Policier",
-      ratings: [
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-      ],
-      averageRating: 3,
-    },
-    {
-      id: "8",
-      userId: "clc7s9xnh7zpt0ak4fisdwuj1",
-      title: "Book for Esther",
-      author: "Alabaster",
-      imageUrl: "https://via.placeholder.com/206x260",
-      year: 2022,
-      genre: "Paysage",
-      ratings: [
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-      ],
-      averageRating: 4,
-    },
-    {
-      id: "9",
-      userId: "clc4wj5lh3gyi0ak4eq4n8syr",
-      title: "The Kinfolk Table",
-      author: "Nathan Williams",
-      imageUrl: "https://via.placeholder.com/206x260",
-      year: 2022,
-      genre: "Cuisine",
-      ratings: [
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "1",
-          grade: 5,
-        },
-        {
-          userId: "clc4wj5lh3gyi0ak4eq4n8syr",
-          grade: 1,
-        },
-      ],
-      averageRating: 3,
-    },
-  ];
-  res.status(200).json(book);
+app.post("/api/books", (req, res, next) => {
+  delete req.body._id;
+  const thing = new Thing({
+    ...req.body,
+  });
+  thing
+    .save()
+    .then(() => {
+      res.status(201).json({ message: "Livre enregistré !" });
+    })
+
+    .catch((error) => res.status(400).json({ error }));
+});
+
+app.get("/api/books/:id", (req, res, next) => {
+  Thing.findOne({ _id: req.params.id })
+
+    .then((thing) => {
+      console.log(req.params.id);
+      res.status(200).json(thing);
+    })
+    .catch((error) => res.status(404).json({ error }));
+});
+
+app.put("/api/books/:id", (req, res, next) => {
+  Thing.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
+    .then(() => res.status(200).json({ message: "Livre modifié !" }))
+    .catch((error) => res.status(400).json({ error }));
+});
+app.delete("/api/books/:id", (req, res, next) => {
+  Thing.deleteOne({ _id: req.params.id })
+    .then(() => res.status(200).json({ message: "Livre supprimé !" }))
+    .catch((error) => res.status(400).json({ error }));
+});
+
+app.get("/api/books", (req, res, next) => {
+  Thing.find()
+    .then((things) => res.status(200).json(things))
+    .catch((error) => res.status(400).json({ error }));
 });
 
 module.exports = app;
