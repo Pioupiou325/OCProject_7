@@ -30,9 +30,11 @@ exports.getOneBook = (req, res, next) => {
     _id: req.params.id,
   })
     .then((book) => {
+      console.log("recherche 1 book");
       res.status(200).json(book);
     })
     .catch((error) => {
+      console.log("erreur pour un");
       res.status(404).json({
         error: error,
       });
@@ -80,9 +82,11 @@ exports.deleteBook = (req, res, next) => {
 exports.getAllBook = (req, res, next) => {
   Book.find()
     .then((books) => {
+      console.log("recherche get all books");
       res.status(200).json(books);
     })
     .catch((error) => {
+      console.log("erreur pour all");
       res.status(400).json({
         error: error,
       });

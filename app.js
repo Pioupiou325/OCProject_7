@@ -1,14 +1,14 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const bookRoutes = require('./routes/book');
-const userRoutes = require('./routes/user');
+const bookRoutes = require("./routes/book");
+const userRoutes = require("./routes/user");
 
-app.use('/api/book', bookRoutes);
-app.use('/api/auth', userRoutes);
+app.use("/api/books", bookRoutes);
+app.use("/api/auth", userRoutes);
 mongoose
   .connect(
-    `mongodb+srv://monvieuxgrimoire7:monvieuxgrimoire7@cluster0.e8iqnnv.mongodb.net/mon_vieux_grimoire?retryWrites=true&w=majority`,
+    `mongodb+srv://monvieuxgrimoire7:monvieuxgrimoire7@cluster0.staviob.mongodb.net/mon_vieux_grimoire?retryWrites=true&w=majority`,
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
@@ -28,6 +28,5 @@ app.use((req, res, next) => {
   );
   next();
 });
-
 
 module.exports = app;
