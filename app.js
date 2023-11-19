@@ -2,7 +2,10 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const bookRoutes = require('./routes/book');
+const userRoutes = require('./routes/user');
+
 app.use('/api/book', bookRoutes);
+app.use('/api/auth', userRoutes);
 mongoose
   .connect(
     `mongodb+srv://monvieuxgrimoire7:monvieuxgrimoire7@cluster0.e8iqnnv.mongodb.net/mon_vieux_grimoire?retryWrites=true&w=majority`,
