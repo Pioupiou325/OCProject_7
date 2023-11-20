@@ -2,14 +2,8 @@ const Book = require("../models/Book");
 
 exports.createBook = (req, res, next) => {
   const book = new Book({
-    userId: req.body.userId,
-    title: req.body.title,
-    author: req.body.author,
-    imageUrl: req.body.imageUrl,
-    year: req.body.year,
-    genre: req.body.genre,
-    rating: req.body.rating,
-    averageRating: req.body.averageRating,
+    book: req.body.book,    
+    imageUrl: req.body.file    
   });
   book
     .save()
