@@ -1,10 +1,10 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const bookRoutes = require("./routes/book");
-const userRoutes = require("./routes/user");
+const bookRoutes = require("./routes/bookRoutes");
+const userRoutes = require("./routes/userRoutes");
 
-app.use(express.json());
+
 mongoose
 .connect(
   `mongodb+srv://testeur:testeur@cluster0.staviob.mongodb.net/mon_vieux_grimoire?retryWrites=true&w=majority`,
@@ -13,7 +13,7 @@ mongoose
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
   
-  
+  app.use(express.json());
   app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader(

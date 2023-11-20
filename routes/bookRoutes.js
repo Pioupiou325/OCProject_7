@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const auth = require("../middleware/auth");
-const bookCtrl = require("../controllers/book");
+const bookCtrl = require("../controllers/bookController");
 
 router.get("/", bookCtrl.getAllBook);
 router.post("/", auth, bookCtrl.createBook);
