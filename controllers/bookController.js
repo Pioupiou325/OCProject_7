@@ -44,13 +44,13 @@ exports.getOneBook = (req, res, next) => {
       res.status(404).json({ error });
     });
 };
+
 exports.getBestsBooks = (req, res, next) => {
-  console.log("getBestsBooks");
-  Book.find()
+  const bestBooks = Book.find()
+    .sort({ averageRating: -1 })
     .then((books) => {
-      books.sort((a, b) => b.averageRating - a.averageRating);
-      const bestAverageRating = books.slice(0, 3);
-      res.status(200).json(bestAverageRating);
+      const bestBooks = books.slice(0, 3);
+      res.status(200).json(bestBooks);
     })
     .catch((error) => {
       console.log("erreur pour 3 bests averageRating");
@@ -59,6 +59,7 @@ exports.getBestsBooks = (req, res, next) => {
       });
     });
 };
+
 exports.noteBook = (req, res, next) => {
   Book.find();
   console.log("noteBook");
@@ -107,16 +108,11 @@ exports.deleteBook = (req, res, next) => {
 };
 
 exports.getAllBook = (req, res, next) => {
-  console.log("getAllBook");
   Book.find()
     .then((books) => {
-      console.log("recherche get all books");
       res.status(200).json(books);
     })
     .catch((error) => {
-      console.log("erreur pour all");
-      res.status(400).json({
-        error: error,
-      });
+      res.status(400).json({ error });
     });
 };
