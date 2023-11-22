@@ -27,8 +27,17 @@ exports.createBook = (req, res, next) => {
 
 
 exports.noteBook = (req, res, next) => {
-  Book.find();
-  console.log("noteBook");
+  Book.find()
+    .then(book => {
+      if (book.userId != req.auth.userId) {
+        console.log("note possible");
+      } else {
+        console.log("note impossible");
+        console.log("noteBook");
+      }
+    })
+    .catch((error) => res.status(400).JSON({ error }));
+
 };
 exports.modifyBook = (req, res, next) => {
   console.log("modifyBook");
