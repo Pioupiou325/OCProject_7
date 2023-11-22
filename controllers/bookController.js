@@ -1,7 +1,8 @@
 const Book = require("../models/Book");
+const fs = require("fs");
 
 exports.createBook = (req, res, next) => {
-  console.log("createBook")
+  console.log("createBook");
   const bookObject = JSON.parse(req.body.book);
   delete bookObject._id;
   delete bookObject._userId;
@@ -11,6 +12,13 @@ exports.createBook = (req, res, next) => {
     imageUrl: `${req.protocol}://${req.get("host")}/images/${
       req.file.filename
     }`,
+    rating: [
+      {
+        userId: req.auth.userId,
+        grade: 0,
+      },
+    ],
+    averageRating: 0,
   });
 
   book
@@ -24,23 +32,23 @@ exports.createBook = (req, res, next) => {
 };
 
 exports.getOneBook = (req, res, next) => {
-  console.log("getOneBook")
+  console.log("getOneBook");
   Book.findOne({
     _id: req.params.id,
   })
-    .then((book) => { 
-      console.log("getOneBook")
+    .then((book) => {
+      console.log("getOneBook");
       res.status(200).json(book);
     })
     .catch((error) => {
-            res.status(404).json({error});
+      res.status(404).json({ error });
     });
 };
 exports.getBestsBooks = (req, res, next) => {
-  console.log("getBestsBooks")
-  Book.find()    
-    .then((books) => {      
-      books.sort((a,b)=>b.averageRating - a.averageRating);
+  console.log("getBestsBooks");
+  Book.find()
+    .then((books) => {
+      books.sort((a, b) => b.averageRating - a.averageRating);
       const bestAverageRating = books.slice(0, 3);
       res.status(200).json(bestAverageRating);
     })
@@ -51,48 +59,55 @@ exports.getBestsBooks = (req, res, next) => {
       });
     });
 };
+exports.noteBook = (req, res, next) => {
+  Book.find();
+  console.log("noteBook");
+};
 exports.modifyBook = (req, res, next) => {
-  console.log("modifyBook")
-  const book = new Book({
-    userId: req.body.userId,
-    title: req.body.title,
-    author: req.body.author,
-    imageUrl: req.body.imageUrl,
-    year: req.body.year,
-    genre: req.body.genre,
-    rating: req.body.rating,
-    averageRating: req.body.averageRating,
+  console.log("modifyBook");
+  const bookObject = req.file
+    ? {
+        ...JSON.parse(req.body.book),
+        imageUrl: `&{req.protocol}://&{req.get('host')}/images/&{req.file.filename}`,
+      }
+    : {
+        ...req.body,
+      };
+  delete bookObject._userId;
+  Book.findOne({ _id: req.body.userId }).then((book) => {
+    if (book.userId != req.auth.userId) {
+      res.statut(401).JSON({ message: "non autorisé" });
+    } else {
+      Book.updateOne({ _id: req.params.id }, { bookObject, _id: req.params.id })
+        .then(res.status(200).json({ message: "livre modifié" }))
+        .catch((error) => res.status(400).JSON({ error }));
+    }
   });
-  Book.updateOne({ _id: req.params.id }, book)
-    .then(() => {
-      res.status(201).json({
-        message: "Book updated successfully!",
-      });
-    })
-    .catch((error) => {
-      res.status(400).json({
-        error: error,
-      });
-    });
 };
 
 exports.deleteBook = (req, res, next) => {
-  console.log("deleteBook")
-  Book.deleteOne({ _id: req.params.id })
-    .then(() => {
-      res.status(200).json({
-        message: "Deleted!",
-      });
+  Book.findOne({ _id: req.params.id })
+    .then((book) => {
+      if (book.userId != req.auth.userId) {
+        res.status(401).json({ message: "Not authorized" });
+      } else {
+        const filename = book.imageUrl.split("/images/")[1];
+        fs.unlink(`images/${filename}`, () => {
+          Book.deleteOne({ _id: req.params.id })
+            .then(() => {
+              res.status(200).json({ message: "Objet supprimé !" });
+            })
+            .catch((error) => res.status(401).json({ error }));
+        });
+      }
     })
     .catch((error) => {
-      res.status(400).json({
-        error: error,
-      });
+      res.status(500).json({ error });
     });
 };
 
 exports.getAllBook = (req, res, next) => {
-  console.log("getAllBook")
+  console.log("getAllBook");
   Book.find()
     .then((books) => {
       console.log("recherche get all books");
