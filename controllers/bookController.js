@@ -13,6 +13,8 @@ exports.createBook = (req, res, next) => {
     }`,
     // ratings: [],
     // averageRating:0,
+    // ou alors prends en valeur la valeur de la 1ère note si ce n est pas 'automatique' :
+    // averageRating: bookObject.ratings[0];
   });
 
   book
@@ -25,9 +27,7 @@ exports.createBook = (req, res, next) => {
     });
 };
 
-
-
-exports.modifyBook = (req, res, next) => {  
+exports.modifyBook = (req, res, next) => {
   const bookObject = req.file
     ? {
         ...JSON.parse(req.body.book),
@@ -85,7 +85,7 @@ exports.getBestsBooks = (req, res, next) => {
       const bestBooks = books.slice(0, 3);
       res.status(200).json(bestBooks);
     })
-    .catch((error) => {     
+    .catch((error) => {
       res.status(400).json({
         error: error,
       });
@@ -102,7 +102,7 @@ exports.getOneBook = (req, res, next) => {
       res.status(404).json({ error });
     });
 };
-exports.noteBook = (req, res, next) => { 
+exports.noteBook = (req, res, next) => {
   const userId = req.auth.userId;
   const note = req.body.rating;
   // on cherche le livre à noter
@@ -119,7 +119,7 @@ exports.noteBook = (req, res, next) => {
       // je le .some dans le tableau book.ratings pour savoir si il y est déjà
       const userAlreadyRated = book.ratings.some(
         (rating) => rating.userId === userId
-      );     
+      );
       // si le user a déjà noté ou si c est le créateur du livre on return
       if (userAlreadyRated || creatorBook === userId) {
         return res.status(403).json({
@@ -137,14 +137,13 @@ exports.noteBook = (req, res, next) => {
       let newAverageNoteBook = 0;
       let sommeRatings = 0;
       // une boucle pour ajouter chaque note existante à sommeRatings
-      for (i = 0; i < book.ratings.length; i++) {        
+      for (i = 0; i < book.ratings.length; i++) {
         sommeRatings += book.ratings[i].grade;
       }
       // on rajoute la note du req
       sommeRatings += note;
       // on calcule la moyenne en ajoutant 1 à la longueur du tableau ratings
       newAverageNoteBook = sommeRatings / (book.ratings.length + 1);
-      
 
       // on push le nouveau rating et on modifie la moyenne
 
