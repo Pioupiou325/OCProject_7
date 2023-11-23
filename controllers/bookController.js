@@ -10,7 +10,11 @@ exports.createBook = (req, res, next) => {
     userId: req.auth.userId,
     imageUrl: `${req.protocol}://${req.get("host")}/images/${
       req.file.filename
-    }`});
+      }`,
+    // ratings: [],
+    // averageRating:0,
+
+  });
 
   book
     .save()
@@ -22,23 +26,86 @@ exports.createBook = (req, res, next) => {
     });
 };
 
-
-
-
-
 exports.noteBook = (req, res, next) => {
-  Book.find()
-    .then(book => {
-      if (book.userId != req.auth.userId) {
-        console.log("note possible");
-      } else {
-        console.log("note impossible");
-        console.log("noteBook");
+  console.log(req.body);
+  const userId = req.auth.userId;
+  const note = req.body.rating;
+// on cherche le livre à noter
+  Book.findOne({ _id: req.params.id })
+    .then((book) => {
+      if (!book) {
+        // si le livre n existe pas 
+        return res.status(404).json({ message: "Livre non trouvé" });
       }
-    })
-    .catch((error) => res.status(400).JSON({ error }));
 
+      // si il existe on continue 
+      // je recupere l id du créateur du livre
+      const creatorBook = book.userId;
+      // je le .some dans le tableau book.ratings pour savoir si il y est déjà
+      const userAlreadyRated = book.ratings.some(
+        (rating) => rating.userId === userId
+      );
+      console.log("userAlreadyRated est " + userAlreadyRated)
+      // si le user a déjà noté ou si c est le créateur du livre on return
+      if (userAlreadyRated || creatorBook === userId) {
+        return res
+          .status(403)
+          .json({
+            message: "Vous avez déjà noté ce livre ou vous êtes l'auteur",
+          });
+      }
+      // sinon on continue et on teste la note entre 0 et 5
+      if (note < 0 || note > 5) {
+        return res
+          .status(403)
+          .json({ message: "La note doit être comprise entre 0 et 5" });
+      }
+      // on continue pour la moyenne
+      
+      let newAverageNoteBook = 0;
+      let sommeRatings = 0;
+      // une boucle pour ajouter chaque note existante à sommeRatings
+      for (i = 0; i < book.ratings.length; i++) {
+        console.log(i);
+        sommeRatings += book.ratings[i].grade;
+      }
+      // on rajoute la note du req 
+      sommeRatings += note;
+      // on calcule la moyenne en ajoutant 1 à la longueur du tableau ratings
+      newAverageNoteBook = sommeRatings / (book.ratings.length + 1);
+      // console.log(newAverageNoteBook);
+      // console.log({ userId: userId, grade: note })
+      
+      // on push le nouveau rating et on modifie la moyenne
+
+      book.ratings.push({ userId: userId, grade: note });
+      book.averageRating = newAverageNoteBook;
+      // on save dans la base de donnée mongoDB
+      book.save()
+        .then((book) => res.status(200).json(book))
+        .catch((error) => {
+          res
+            .status(500)
+            .json({
+              message: "Erreur lors de la notation du livre",
+              error: error.message,
+            });
+        });
+      
+                
+
+    })
+    
+    .catch((error) => {
+      res
+        .status(500)
+        .json({
+          message: "Erreur lors de la notation du livre",
+          error: error.message,
+        });
+    });
 };
+
 exports.modifyBook = (req, res, next) => {
   console.log("modifyBook");
   const bookObject = req.file
@@ -105,12 +172,11 @@ exports.getBestsBooks = (req, res, next) => {
       });
     });
 };
-exports.getOneBook = (req, res, next) => {   
-
+exports.getOneBook = (req, res, next) => {
   Book.findOne({
     _id: req.params.id,
   })
-    .then((book) => {      
+    .then((book) => {
       res.status(200).json(book);
     })
     .catch((error) => {
