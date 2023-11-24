@@ -1,6 +1,6 @@
 const Book = require("../models/Book");
 const fs = require("fs");
-
+// utiliser sharp
 exports.createBook = (req, res, next) => {
   const bookObject = JSON.parse(req.body.book);
   delete bookObject._id;
@@ -10,11 +10,7 @@ exports.createBook = (req, res, next) => {
     userId: req.auth.userId,
     imageUrl: `${req.protocol}://${req.get("host")}/images/${
       req.file.filename
-    }`,
-    // ratings: [],
-    // averageRating:0,
-    // ou alors prends en valeur la valeur de la 1ère note si ce n est pas 'automatique' :
-    // averageRating: bookObject.ratings[0];
+    }`
   });
 
   book
@@ -68,7 +64,6 @@ exports.deleteBook = (req, res, next) => {
       res.status(500).json({ error });
     });
 };
-////////////ok///////
 exports.getAllBook = (req, res, next) => {
   Book.find()
     .then((books) => {
@@ -133,21 +128,21 @@ exports.noteBook = (req, res, next) => {
           .json({ message: "La note doit être comprise entre 0 et 5" });
       }
       // on continue pour la moyenne
-
+      // on récupère la moyenne actuelle
+      let averageBefore = book.averageRating;
+      // on initialise la moyenne nouvelle à 0
       let newAverageNoteBook = 0;
+      // on initialise la somme des notes à 0
       let sommeRatings = 0;
-      // une boucle pour ajouter chaque note existante à sommeRatings
-      for (i = 0; i < book.ratings.length; i++) {
-        sommeRatings += book.ratings[i].grade;
-      }
+      // on calcule la somme des notes (donc moyenne * nombre de notes)
+      sommeRatings = averageBefore * book.ratings.length;          
       // on rajoute la note du req
       sommeRatings += note;
       // on calcule la moyenne en ajoutant 1 à la longueur du tableau ratings
       newAverageNoteBook = sommeRatings / (book.ratings.length + 1);
-
-      // on push le nouveau rating et on modifie la moyenne
-
+      // on push le nouveau rating 
       book.ratings.push({ userId: userId, grade: note });
+      // on modifie la moyenne
       book.averageRating = newAverageNoteBook;
       // on save dans la base de donnée mongoDB
       book
