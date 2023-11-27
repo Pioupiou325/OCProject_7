@@ -7,7 +7,7 @@ exports.createBook = (req, res, next) => {
   // on efface l id et le userid faux provenants du front
   delete bookObject._id;
   delete bookObject._userId;
-  // on crée un objet book suivant le model 
+  // on crée un objet book suivant le model
   const book = new Book({
     // on met donc le contenu de l objet moins les 2 delete
     ...bookObject,
@@ -18,7 +18,7 @@ exports.createBook = (req, res, next) => {
       req.file.filename
     }`,
   });
-// on sauve le book dans mongodb
+  // on sauve le book dans mongodb
   book
     .save()
     .then(() => {
@@ -30,41 +30,58 @@ exports.createBook = (req, res, next) => {
 };
 
 exports.modifyBook = (req, res, next) => {
+  // on initialise un variable pour savoir si il y a une image ou non à false pour l instant
+  let imageToDelete = false;
   // on teste si un fichier est inclus dans la requete
   const bookObject = req.file
     ? {
-      // si oui on traduit le json en objet
-      ...JSON.parse(req.body.book),
-      // on créée l adresse de la nouvelle image 
+        // si oui on traduit le json en objet
+        ...JSON.parse(req.body.book),
+        // on créée l adresse de la nouvelle image
         imageUrl: `${req.protocol}://${req.get("host")}/images/${
           req.file.filename
         }`,
       }
     : {
-      // ou bien on récupere l' objet ainsi créé (sans fichier)
+        // ou bien on récupere l' objet ainsi créé (sans fichier)
         ...req.body,
     };
+  // si une image est inclus on met la variable à true
+  if (req.file) {
+    imageToDelete = true;
+  } else {
+    imageToDelete = false;
+  }
   // on efface les userid envoyé par le front
   delete bookObject._userId;
   // on cherche le book qui correspond à l' id passé en parametre
-  Book.findOne({ _id: req.params.id }).then((book) => {
-    // on vérifie si le userid du livre correspond à celui de l utilisateur donc lui qui l a créé
-    if (book.userId != req.auth.userId) {
-      // si ce n est pas le créateur pas autorisé
-      res.statut(403).JSON({ message: "unauthorized request" });
-    } else {
-      // si c est le créateur on update le livre dans mongodb avec l id puis l objet qui remplace avec l id
-      Book.updateOne(
-        { _id: req.params.id },
-        { ...bookObject, _id: req.params.id }
-      )
-        .then(res.status(200).json({ message: "livre modifié" }))
-        .catch((error) => res.status(400).JSON({ error }));
-    }
-  })
+  Book.findOne({ _id: req.params.id })
+    .then((book) => {
+      // on vérifie si le userid du livre correspond à celui de l utilisateur donc lui qui l a créé
+      if (book.userId != req.auth.userId) {
+        // si ce n est pas le créateur : pas autorisé
+        res.statut(403).JSON({ message: "unauthorized request" });
+      } else {
+        // si l image est a enlever 
+        if (imageToDelete) {
+          // on récupère le nom de l image
+          const filename = book.imageUrl.split("/images/")[1];
+          // puis on l efface du fichier images
+          fs.unlink(`images/${filename}`, () => {           
+          });          
+        }
+        // si c est le créateur on update le livre dans mongodb avec l id puis l objet qui remplace avec l id
+        Book.updateOne(
+          { _id: req.params.id },
+          { ...bookObject, _id: req.params.id }
+        )
+          .then(res.status(200).json({ message: "livre modifié" }))
+          .catch((error) => res.status(400).JSON({ error }));
+      }
+    })
     .catch((error) => {
       res.status(400).JSON({ error });
-  })
+    });
 };
 
 exports.deleteBook = (req, res, next) => {
