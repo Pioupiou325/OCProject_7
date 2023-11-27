@@ -32,6 +32,12 @@ exports.createBook = (req, res, next) => {
 exports.modifyBook = (req, res, next) => {
   // on initialise un variable pour savoir si il y a une image ou non à false pour l instant
   let imageToDelete = false;
+  // si une image est inclus on met la variable à true
+  if (req.file) {
+    imageToDelete = true;
+  } else {
+    imageToDelete = false;
+  }
   // on teste si un fichier est inclus dans la requete
   const bookObject = req.file
     ? {
@@ -46,12 +52,6 @@ exports.modifyBook = (req, res, next) => {
         // ou bien on récupere l' objet ainsi créé (sans fichier)
         ...req.body,
     };
-  // si une image est inclus on met la variable à true
-  if (req.file) {
-    imageToDelete = true;
-  } else {
-    imageToDelete = false;
-  }
   // on efface les userid envoyé par le front
   delete bookObject._userId;
   // on cherche le book qui correspond à l' id passé en parametre
@@ -70,7 +70,7 @@ exports.modifyBook = (req, res, next) => {
           fs.unlink(`images/${filename}`, () => {           
           });          
         }
-        // si c est le créateur on update le livre dans mongodb avec l id puis l objet qui remplace avec l id
+        // puis on update le livre dans mongodb avec l id puis l objet qui remplace avec l id
         Book.updateOne(
           { _id: req.params.id },
           { ...bookObject, _id: req.params.id }
