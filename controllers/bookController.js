@@ -10,7 +10,7 @@ exports.createBook = (req, res, next) => {
     userId: req.auth.userId,
     imageUrl: `${req.protocol}://${req.get("host")}/images/${
       req.file.filename
-    }`
+    }`,
   });
 
   book
@@ -27,21 +27,29 @@ exports.modifyBook = (req, res, next) => {
   const bookObject = req.file
     ? {
         ...JSON.parse(req.body.book),
-        imageUrl: `&{req.protocol}://&{req.get('host')}/images/&{req.file.filename}`,
+        imageUrl: `${req.protocol}://${req.get("host")}/images/${
+          req.file.filename
+        }`,
       }
     : {
         ...req.body,
       };
   delete bookObject._userId;
-  Book.findOne({ _id: req.body.userId }).then((book) => {
+  Book.findOne({ _id: req.params.id }).then((book) => {
     if (book.userId != req.auth.userId) {
       res.statut(403).JSON({ message: "unauthorized request" });
     } else {
-      Book.updateOne({ _id: req.params.id }, { bookObject, _id: req.params.id })
+      Book.updateOne(
+        { _id: req.params.id },
+        { ...bookObject, _id: req.params.id }
+      )
         .then(res.status(200).json({ message: "livre modifié" }))
         .catch((error) => res.status(400).JSON({ error }));
     }
-  });
+  })
+    .catch((error) => {
+      res.status(400).JSON({ error });
+  })
 };
 
 exports.deleteBook = (req, res, next) => {
@@ -135,12 +143,12 @@ exports.noteBook = (req, res, next) => {
       // on initialise la somme des notes à 0
       let sommeRatings = 0;
       // on calcule la somme des notes (donc moyenne * nombre de notes)
-      sommeRatings = averageBefore * book.ratings.length;          
+      sommeRatings = averageBefore * book.ratings.length;
       // on rajoute la note du req
       sommeRatings += note;
       // on calcule la moyenne en ajoutant 1 à la longueur du tableau ratings
       newAverageNoteBook = sommeRatings / (book.ratings.length + 1);
-      // on push le nouveau rating 
+      // on push le nouveau rating
       book.ratings.push({ userId: userId, grade: note });
       // on modifie la moyenne
       book.averageRating = newAverageNoteBook;
