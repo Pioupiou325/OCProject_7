@@ -1,6 +1,6 @@
 const Book = require("../models/Book");
 const fs = require("fs");
-// utiliser sharp
+
 exports.createBook = (req, res, next) => {
   const bookObject = JSON.parse(req.body.book);
   delete bookObject._id;
