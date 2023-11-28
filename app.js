@@ -7,7 +7,7 @@ const userRoutes = require("./routes/userRoutes");
 
 mongoose
   .connect(
-    `mongodb+srv://testeur:testeur@cluster0.staviob.mongodb.net/mon_vieux_grimoire?retryWrites=true&w=majority`,
+    `mongodb+srv://monvieuxgrimoire7:MoViGr7MdB@cluster0.staviob.mongodb.net/mon_vieux_grimoire?retryWrites=true&w=majority`,
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
