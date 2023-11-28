@@ -4,10 +4,11 @@ const mongoose = require("mongoose");
 const path = require("path");
 const bookRoutes = require("./routes/bookRoutes");
 const userRoutes = require("./routes/userRoutes");
+require('dotenv').config()
 
 mongoose
   .connect(
-    `mongodb+srv://monvieuxgrimoire7:MoViGr7MdB@cluster0.staviob.mongodb.net/mon_vieux_grimoire?retryWrites=true&w=majority`,
+    `mongodb+srv://${process.env.USER}:${process.env.PASS}@cluster0.staviob.mongodb.net/mon_vieux_grimoire?retryWrites=true&w=majority`,
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
