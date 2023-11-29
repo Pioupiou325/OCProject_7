@@ -1,6 +1,6 @@
 # Cloner le repo github:
 ```
-git clone 
+git clone https://github.com/Pioupiou325/OCProject_7.git
 ```
 # installer les dépendances :
 ```
