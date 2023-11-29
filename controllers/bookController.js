@@ -67,7 +67,7 @@ exports.modifyBook = (req, res, next) => {
           // on récupère le nom de l image
           const filename = book.imageUrl.split("/images/")[1];
           // puis on l efface du fichier images
-          fs.unlink(`images/${filename}`, () => {           
+          fs.unlink(`images/${filename}`, () => {              
           });          
         }
         // puis on update le livre dans mongodb avec l id puis l objet qui remplace avec l id
