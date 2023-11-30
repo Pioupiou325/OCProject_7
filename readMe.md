@@ -17,3 +17,5 @@ SECRET_TOKEN="RANDOM_TOKEN_SECRET"
 ```
 nodemon server
 ```
+
+### le projet a été testé sous node 20
