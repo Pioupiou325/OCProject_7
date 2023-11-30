@@ -1,3 +1,6 @@
+# Mon vieux grimoire 
+# Backend
+
 # Cloner le repo github:
 ```
 git clone https://github.com/Pioupiou325/OCProject_7.git
@@ -19,3 +22,5 @@ nodemon server
 ```
 
 ### le projet a été testé sous node 20
+
+### Le [frontend du projet] (https://github.com/OpenClassrooms-Student-Center/P7-Dev-Web-livres#mon-vieux-grimoire)
